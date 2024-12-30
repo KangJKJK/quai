@@ -266,7 +266,6 @@ elif [ "$option" == "3" ]; then
         ./output/quai-gpu-miner-nvidia -U -P stratum://${proxy_ip}:${proxy_port}
     else
         ./output/quai-gpu-miner-amd -G -P stratum://${proxy_ip}:${proxy_port}
-    fi./quai-gpu-miner -G --HWMON 1 -P stratum://${proxy_ip}:${proxy_port}
     fi
 
 else
