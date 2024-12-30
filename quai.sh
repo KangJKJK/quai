@@ -25,7 +25,7 @@ if [ "$option" == "1" ]; then
     echo -e "4: 드라이버 설치 건너뛰기"
     
     while true; do
-        read -p "선택 (1, 2, 3): " driver_option
+        read -p "선택 (1, 2, 3, 4): " driver_option
         
         case $driver_option in
             1)
