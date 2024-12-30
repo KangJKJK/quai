@@ -176,47 +176,49 @@ if [ "$option" == "1" ]; then
 elif [ "$option" == "2" ]; then
     echo "Stratum 프록시 구동을 선택하셨습니다."
 
-        # 깃클론
-        git clone git clone https://github.com/dominant-strategies/go-quai-stratum
+    # 깃클론
+    git clone https://github.com/dominant-strategies/go-quai-stratum
 
-        echo -e "${GREEN}작업 디렉토리 이동${NC}"
-        cd go-quai-stratum
+    echo -e "${GREEN}작업 디렉토리 이동${NC}"
+    cd go-quai-stratum
 
-        echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.40.1)${NC}"
-        echo -e "${Yellow}해당사이트로 이동하세요:https://github.com/dominant-strategies/go-quai-stratum/tags${NC}"
-        read -p "최신 버전을 입력하세요 (예:0.18.1): " proxy_version
-        git checkout "v$proxy_version"
+    echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.40.1)${NC}"
+    echo -e "${Yellow}해당사이트로 이동하세요:https://github.com/dominant-strategies/go-quai-stratum/tags${NC}"
+    read -p "최신 버전을 입력하세요 (예:0.18.1): " proxy_version
+    git checkout "v$proxy_version"
 
-        # 환경 변수 즉시 적용
-        source ~/.bashrc
+    # 환경 변수 즉시 적용
+    source ~/.bashrc
 
-        # 환경 변수 즉시 적용
-        cp config/config.example.json config/config.json
+    # 환경 변수 즉시 적용
+    cp config/config.example.json config/config.json
 
-        #프록시 빌드
-        make go-quai-stratum
+    #프록시 빌드
+    make go-quai-stratum
 
-        # 현재 사용 중인 포트 확인 및 허용
-        echo -e "${GREEN}현재 사용 중인 포트를 확인합니다...${NC}"
+    # 현재 사용 중인 포트 확인 및 허용
+    echo -e "${GREEN}현재 사용 중인 포트를 확인합니다...${NC}"
 
-        # TCP 포트 확인 및 허용
-        echo -e "${YELLOW}TCP 포트 확인 및 허용 중...${NC}"
-        sudo ss -tlpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
+    # TCP 포트 확인 및 허용
+    echo -e "${YELLOW}TCP 포트 확인 및 허용 중...${NC}"
+    sudo ss -tlpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
         echo -e "TCP 포트 ${GREEN}$port${NC} 허용"
         sudo ufw allow $port/tcp
         sudo ufw allow 3333/tcp
+    done
     
-        # UDP 포트 확인 및 허용
-        echo -e "${YELLOW}UDP 포트 확인 및 허용 중...${NC}"
-        sudo ss -ulpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
+    # UDP 포트 확인 및 허용
+    echo -e "${YELLOW}UDP 포트 확인 및 허용 중...${NC}"
+    sudo ss -ulpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
         echo -e "UDP 포트 ${GREEN}$port${NC} 허용"
         sudo ufw allow $port/udp
         sudo ufw allow 3333/udp
+    done
 
-        #프록시 실행 
-        read -p "프록시를 실행합니다. 실행 후 나오는 프록시ip를 기록해두세요.(엔터)"
-        ./build/bin/go-quai-stratum --region=cyprus --zone=cyprus1
-    
+    #프록시 실행 
+    read -p "프록시를 실행합니다. 실행 후 나오는 프록시ip를 기록해두세요.(엔터)"
+    ./build/bin/go-quai-stratum --region=cyprus --zone=cyprus1
+
 elif [ "$option" == "3" ]; then
     echo "GPU 마이너 구동을 선택하셨습니다."
     
@@ -272,5 +274,4 @@ else
     echo "잘못된 선택입니다."
     exit 1
 fi
-
 
