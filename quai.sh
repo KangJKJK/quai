@@ -158,9 +158,6 @@ if [ "$option" == "1" ]; then
         read -p "QUAI지갑주소: " quai_wallet
         read -p "QI지갑주소: " qi_wallet
 
-        --node.quai-coinbases '$quai_wallet'
-        --node.qi-coinbases '$qi_wallet'    
-
         # 노드빌드
         make go-quai
 
