@@ -182,16 +182,28 @@ elif [ "$option" == "2" ]; then
     echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.40.1)${NC}"
     echo -e "${Yellow}해당사이트로 이동하세요:https://github.com/dominant-strategies/go-quai-stratum/tags${NC}"
     read -p "최신 버전을 입력하세요 (예:0.18.1): " proxy_version
+    sudo chown -R $(whoami):$(whoami) /home/kangcrypto112/go-quai-stratum
+    git config --global --add safe.directory /home/kangcrypto112/go-quai-stratum
     git checkout "v$proxy_version"
-
-    # 환경 변수 즉시 적용
-    source ~/.bashrc
 
     # 환경 변수 즉시 적용
     cp config/config.example.json config/config.json
 
+    # 환경 변수 설정
+    echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
+    echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+    echo 'export PATH=$GOROOT/bin:$GOPATH/bin:$PATH' >> ~/.bashrc
+    
+    # 환경 변수 즉시 적용
+    export GOROOT=/usr/local/go
+    export GOPATH=$HOME/go
+    export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+    
     #프록시 빌드
     make go-quai-stratum
+
+    # 환경 변수 즉시 적용
+    source ~/.bashrc
 
     # 현재 사용 중인 포트 확인 및 허용
     echo -e "${GREEN}현재 사용 중인 포트를 확인합니다...${NC}"
@@ -201,6 +213,7 @@ elif [ "$option" == "2" ]; then
     sudo ss -tlpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
         echo -e "TCP 포트 ${GREEN}$port${NC} 허용"
         sudo ufw allow $port/tcp
+        sudo ufw allow 22/tcp
         sudo ufw allow 3333/tcp
     done
     
