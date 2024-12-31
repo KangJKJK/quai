@@ -165,10 +165,10 @@ if [ "$option" == "1" ]; then
         ./build/bin/go-quai start \
         --node.slices '[0 0]' \
         --node.genesis-nonce 6224362036655375007 \
-        --node.quai-coinbases '$quai_wallet' \
-        --node.qi-coinbases '$qi_wallet' \
+        --node.quai-coinbases $quai_wallet \
+        --node.qi-coinbases $qi_wallet \
         --node.miner-preference 0.5 \
-        --node.coinbase-lockup 7
+        --node.coinbase-lockup 0
 
 elif [ "$option" == "2" ]; then
     echo "Stratum 프록시 구동을 선택하셨습니다."
