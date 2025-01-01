@@ -11,7 +11,7 @@ echo -e "${GREEN}1: QUAI 노드 설치 및 구동${NC}"
 echo -e "${GREEN}2: Stratum 프록시 구동${NC}"
 echo -e "${GREEN}3: GPU 마이너 구동${NC}"
 echo -e "${RED}모든 설치단계는 각각 다른 SCREEN에서 실행하세요.${NC}"
-echo -e "${RED}설치진행단계는 번호순서대로 실행하세요.${NC}"
+echo -e "${RED}설치진행은 번호순서대로 실행하세요.${NC}"
 
 read -p "선택 (1, 2, 3): " option
 
