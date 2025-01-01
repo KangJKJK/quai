@@ -226,7 +226,7 @@ elif [ "$option" == "2" ]; then
     done
 
     #프록시 실행 
-    read -p "프록시를 실행합니다. 실행 후 나오는 프록시ip를 기록해두세요.(엔터)"
+    read -p "quai 프록시를 실행합니다.(엔터)"
     ./build/bin/go-quai-stratum --region=cyprus --zone=cyprus1
 
 elif [ "$option" == "3" ]; then
