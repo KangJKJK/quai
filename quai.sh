@@ -179,7 +179,7 @@ elif [ "$option" == "2" ]; then
     echo -e "${GREEN}작업 디렉토리 이동${NC}"
     cd go-quai-stratum
 
-    echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.40.1)${NC}"
+    echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.18.1)${NC}"
     echo -e "${Yellow}해당사이트로 이동하세요:https://github.com/dominant-strategies/go-quai-stratum/tags${NC}"
     read -p "최신 버전을 입력하세요 (예:0.18.1): " proxy_version
     sudo chown -R $(whoami):$(whoami) /home/kangcrypto112/go-quai-stratum
