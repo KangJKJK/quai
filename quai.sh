@@ -241,11 +241,21 @@ elif [ "$option" == "3" ]; then
     
     # 스크립트 실행 권한 부여
     sudo chmod +x deploy_miner.sh
+
+    #필수 패키지 설치
+    sudo apt-get update 
+    sudo apt-get install -y build-essential cmake libboost-all-dev
+    sudo apt-get install -y build-essential libpthread-stubs0-dev
     
     # 스크립트 실행
     echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 걸릴 수 있습니다...${NC}"
+    sudo rm -r quai-gpu-miner
     sudo ./deploy_miner.sh
-    
+
+    # 작업공간 이동
+    cd quai-gpu-miner
+    sudo chown -R $(whoami):$(whoami) ~/quai-gpu-miner
+
     # GPU 종류 선택
     echo -e "${YELLOW}사용하실 GPU 종류를 선택하세요:${NC}"
     echo -e "1: NVIDIA GPU"
