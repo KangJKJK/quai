@@ -246,6 +246,15 @@ elif [ "$option" == "3" ]; then
     sudo apt-get update 
     sudo apt-get install -y build-essential cmake libboost-all-dev
     sudo apt-get install -y build-essential libpthread-stubs0-dev
+
+    #Cuda v12.6 설치
+    sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
+    sudo apt-get autoremove
+    wget https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_535.86.10_linux.run
+    sudo sh cuda_12.6.0_535.86.10_linux.run
+    echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
+    echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+    source ~/.bashrc
     
     # 스크립트 실행
     echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 걸릴 수 있습니다...${NC}"
