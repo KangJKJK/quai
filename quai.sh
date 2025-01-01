@@ -7,7 +7,7 @@ NC='\033[0m' # 색상 초기화
 
 # 초기 선택 메뉴
 echo -e "${YELLOW}옵션을 선택하세요:${NC}"
-echo -e "${GREEN}1: QUAI 노드 설치 및 구동(스크린에서 실행)${NC}"
+echo -e "${GREEN}1: QUAI 노드 설치 및 구동${NC}"
 echo -e "${GREEN}2: Stratum 프록시 구동${NC}"
 echo -e "${GREEN}3: GPU 마이너 구동${NC}"
 echo -e "${RED}모든 설치단계는 각각 다른 SCREEN에서 실행하세요.${NC}"
