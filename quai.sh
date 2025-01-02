@@ -244,7 +244,7 @@ elif [ "$option" == "3" ]; then
     sudo apt-get install -y gcc g++
 
     # 스크립트 실행
-    echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 걸릴 수 있습니다...${NC}"
+    echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 오래걸리니 충분히 기다려주세요.${NC}"
     sudo rm -r quai-gpu-miner
     sudo ./deploy_miner.sh
 
