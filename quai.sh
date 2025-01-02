@@ -296,14 +296,16 @@ elif [ "$option" == "4" ]; then
     else
         echo "CUDA toolkit 12.6가 이미 설치되어 있습니다."
     fi
+
+    # CUDA 환경변수 설정
     echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
     echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
     source ~/.bashrc
 
     # CUDA 관련 환경변수 재설정
-    export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
-    export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-    source ~/.bashrc
+    export CUDA_HOME=/usr/local/cuda-12.6
+    export PATH=${CUDA_HOME}/bin:${PATH}
+    export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
 
     # 스크립트 실행 부분 수정
     echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 오래걸리니 충분히 기다려주세요.${NC}"
@@ -329,21 +331,23 @@ elif [ "$option" == "4" ]; then
     read -p "선택 (1, 2): " gpu_option
 
     # build 디렉토리 설정
+    cd $HOME/quai-gpu-miner
     sudo rm -rf build
     sudo mkdir build
+    sudo chown -R $(whoami):$(whoami) build
     cd build
 
-if [ "$gpu_option" == "1" ]; then
-        # NVIDIA GPU용 빌드 (compute capability 옵션 추가)
-        cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF -DCUDA_ARCH="52;60;61;70;75;86"
-        make -j$(nproc)
+    if [ "$gpu_option" == "1" ]; then
+        # NVIDIA GPU용 빌드
+        export CUDA_HOME=/usr/local/cuda-12.6
+        sudo -E cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF \
+            -DCMAKE_CUDA_ARCHITECTURES="52;60;61;70;75;80;86" \
+            -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.6/bin/nvcc
+        sudo -E make -j$(nproc)
         mkdir -p ../output
-        cp kawpowminer/kawpowminer ../output/quai-gpu-miner-nvidia
-        chmod +x ../output/quai-gpu-miner-nvidia
-        
-        # CUDA 12.6용 환경변수 설정
-        export CUDA_VISIBLE_DEVICES=0
-        export CUDA_CACHE_DISABLE=1
+        sudo cp kawpowminer/kawpowminer ../output/quai-gpu-miner-nvidia
+        sudo chmod +x ../output/quai-gpu-miner-nvidia
+        sudo chown -R $(whoami):$(whoami) ../output
     else
         # AMD GPU용 빌드
         cmake .. -DETHASHCUDA=OFF -DETHASHCL=ON
@@ -352,6 +356,7 @@ if [ "$gpu_option" == "1" ]; then
         cp kawpowminer/kawpowminer ../output/quai-gpu-miner-amd
         chmod +x ../output/quai-gpu-miner-amd
     fi
+
 
     # output 디렉토리 설정
     cd ..
