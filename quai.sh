@@ -273,6 +273,30 @@ elif [ "$option" == "3" ]; then
     echo -e "1: NVIDIA GPU"
     echo -e "2: AMD GPU"
     read -p "선택 (1, 2): " gpu_option
+
+    # 현재 디렉토리의 소유권 변경
+    cd ~/quai-gpu-miner
+    sudo chown -R $(whoami):$(whoami) .
+    
+    # build 디렉토리 정리 후 재생성
+    sudo rm -rf build
+    mkdir build
+    cd build
+    
+    # cmake 실행 (권한 문제 해결)
+    sudo cmake .. -DETHASHCUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.6
+    
+    # 빌드 실행
+    sudo make -j$(nproc)
+    
+    # 상위 디렉토리로 이동 후 output 디렉토리 생성
+    cd ..
+    sudo mkdir -p output
+    
+    # 빌드된 파일 복사 및 권한 설정
+    sudo cp build/kawpowminer/kawpowminer output/quai-gpu-miner-nvidia
+    sudo chmod +x output/quai-gpu-miner-nvidia
+    sudo chown -R $(whoami):$(whoami) output/
     
     # GPU 종류에 따른 실행 파일 권한 설정
     if [ "$gpu_option" == "1" ]; then
