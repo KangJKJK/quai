@@ -333,14 +333,24 @@ elif [ "$option" == "4" ]; then
     sudo mkdir build
     cd build
 
- if [ "$gpu_option" == "1" ]; then
-        # NVIDIA GPU용 빌드
-        cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF
-        cmake --build .
+if [ "$gpu_option" == "1" ]; then
+        # NVIDIA GPU용 빌드 (compute capability 옵션 추가)
+        cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF -DCUDA_ARCH="52;60;61;70;75;86"
+        make -j$(nproc)
+        mkdir -p ../output
+        cp kawpowminer/kawpowminer ../output/quai-gpu-miner-nvidia
+        chmod +x ../output/quai-gpu-miner-nvidia
+        
+        # CUDA 12.6용 환경변수 설정
+        export CUDA_VISIBLE_DEVICES=0
+        export CUDA_CACHE_DISABLE=1
     else
         # AMD GPU용 빌드
         cmake .. -DETHASHCUDA=OFF -DETHASHCL=ON
-        cmake --build .
+        make -j$(nproc)
+        mkdir -p ../output
+        cp kawpowminer/kawpowminer ../output/quai-gpu-miner-amd
+        chmod +x ../output/quai-gpu-miner-amd
     fi
 
     # output 디렉토리 설정
