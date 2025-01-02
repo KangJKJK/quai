@@ -7,15 +7,52 @@ NC='\033[0m' # 색상 초기화
 
 # 초기 선택 메뉴
 echo -e "${YELLOW}옵션을 선택하세요:${NC}"
-echo -e "${GREEN}1: QUAI 노드 설치 및 구동${NC}"
-echo -e "${GREEN}2: Stratum 프록시 구동${NC}"
-echo -e "${GREEN}3: GPU 마이너 구동${NC}"
+echo -e "${GREEN}1: 노드 모니터링 활성화${NC}"
+echo -e "${GREEN}2: QUAI 노드 설치 및 구동${NC}"
+echo -e "${GREEN}3: Stratum 프록시 구동${NC}"
+echo -e "${GREEN}4: GPU 마이너 구동${NC}"
 echo -e "${RED}모든 설치단계는 각각 다른 SCREEN에서 실행하세요.${NC}"
 echo -e "${RED}설치진행은 번호순서대로 실행하세요.${NC}"
 
-read -p "선택 (1, 2, 3): " option
+read -p "선택 (1, 2, 3, 4): " option
 
 if [ "$option" == "1" ]; then
+    echo "노드 모니터링 활성화를 선택하셨습니다."
+
+    # VPS IP 주소 확인
+    VPS_IP=$(curl -s ifconfig.me)
+    
+    # Prometheus 설치
+    echo -e "${GREEN}Prometheus를 설치합니다...${NC}"
+    sudo apt install prometheus -y
+    sudo systemctl enable prometheus
+    
+    # Grafana 설치
+    echo -e "${GREEN}Grafana를 설치합니다...${NC}"
+    sudo apt-get install -y adduser libfontconfig1 musl
+    wget https://dl.grafana.com/oss/release/grafana_10.4.2_amd64.deb
+    sudo dpkg -i grafana_10.4.2_amd64.deb
+    
+    # Prometheus 설정 파일 복사
+    echo -e "${GREEN}Prometheus 설정을 구성합니다...${NC}"
+    cd go-quai
+    sudo cp metrics_config/prometheus.yml /etc/prometheus/
+    
+    # 서비스 시작
+    echo -e "${GREEN}모니터링 서비스를 시작합니다...${NC}"
+    sudo systemctl start prometheus
+    sudo systemctl start grafana-server.service
+    
+    echo -e "${YELLOW}모니터링 설정이 완료되었습니다.${NC}"
+    echo -e "${YELLOW}Grafana 대시보드: http://${VPS_IP}:3000${NC}"
+    echo -e "${YELLOW}기본 로그인 정보: admin/admin${NC}"
+    echo -e "${GREEN}노드 실행 시 --metrics.enabled 플래그를 추가하세요.${NC}"
+    
+    # 포트 허용
+    sudo ufw allow 3000/tcp
+    sudo ufw allow 9090/tcp
+
+elif [ "$option" == "2" ]; then
     echo "QUAI 노드 새로 설치를 선택했습니다."
     
     echo -e "${YELLOW}NVIDIA 드라이버 설치 옵션을 선택하세요:${NC}"
@@ -148,6 +185,11 @@ if [ "$option" == "1" ]; then
         read -p "QUAI지갑주소: " quai_wallet
         read -p "QI지갑주소: " qi_wallet
 
+        # 노드 실행 전 로그 디렉토리 권한 설정
+        mkdir -p nodelogs
+        sudo chown -R $(whoami):$(whoami) nodelogs
+        sudo chmod -R 755 nodelogs
+
         # 노드빌드
         make go-quai
 
@@ -155,12 +197,13 @@ if [ "$option" == "1" ]; then
         ./build/bin/go-quai start \
         --node.slices '[0 0]' \
         --node.genesis-nonce 6224362036655375007 \
-        --node.quai-coinbases $quai_wallet \
-        --node.qi-coinbases $qi_wallet \
+        --node.quai-coinbases ${quai_wallet} \
+        --node.qi-coinbases ${qi_wallet} \
         --node.miner-preference 0.5 \
-        --node.coinbase-lockup 0
+        --node.coinbase-lockup 0 \
+        --metrics.enabled
 
-elif [ "$option" == "2" ]; then
+elif [ "$option" == "3" ]; then
     echo "Stratum 프록시 구동을 선택하셨습니다."
 
     # 깃클론
@@ -221,7 +264,7 @@ elif [ "$option" == "2" ]; then
     read -p "quai 프록시를 실행합니다.(엔터)"
     ./build/bin/go-quai-stratum --region=cyprus --zone=cyprus1
 
-elif [ "$option" == "3" ]; then
+elif [ "$option" == "4" ]; then
     echo "GPU 마이너 구동을 선택하셨습니다."
     
     # 작업 디렉토리 생성
