@@ -245,6 +245,10 @@ elif [ "$option" == "3" ]; then
     sudo apt-get install -y libboost-system-dev
     sudo apt-get install -y gcc g++
 
+    # CUDA 관련 환경변수 재설정
+    export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
+    export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
     # 스크립트 실행
     echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 오래걸리니 충분히 기다려주세요.${NC}"
     sudo rm -r quai-gpu-miner
