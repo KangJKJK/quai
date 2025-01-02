@@ -215,8 +215,8 @@ elif [ "$option" == "3" ]; then
     echo -e "${GREEN}Git 최신버전을 확인합니다. (현재:v0.18.1)${NC}"
     echo -e "${Yellow}해당사이트로 이동하세요:https://github.com/dominant-strategies/go-quai-stratum/tags${NC}"
     read -p "최신 버전을 입력하세요 (예:0.18.1): " proxy_version
-    sudo chown -R $(whoami):$(whoami) /home/kangcrypto112/go-quai-stratum
-    git config --global --add safe.directory /home/kangcrypto112/go-quai-stratum
+    sudo chown -R $(whoami):$(whoami) $HOME/go-quai-stratum
+    git config --global --add safe.directory $HOME/go-quai-stratum
     git checkout "v$proxy_version"
 
     # 환경 변수 즉시 적용
