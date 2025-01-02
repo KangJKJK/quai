@@ -204,6 +204,8 @@ elif [ "$option" == "2" ]; then
         echo -e "TCP 포트 ${GREEN}$port${NC} 허용"
         sudo ufw allow $port/tcp
         sudo ufw allow 22/tcp
+        sudo ufw allow 3000/tcp
+        sudo ufw allow 4090/tcp
         sudo ufw allow 3333/tcp
     done
     
