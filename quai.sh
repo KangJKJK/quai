@@ -273,21 +273,15 @@ elif [ "$option" == "3" ]; then
     sudo apt update && sudo apt upgrade -y
     sudo apt install cuda-drivers
     
-    # Stratum 프록시 설정
-    echo -e "${YELLOW}Stratum 프록시 설정을 진행합니다...${NC}"
-    read -p "Stratum 프록시 IP 주소를 입력하세요 (같은 기기인 경우 localhost): " proxy_ip
-    read -p "Stratum 프록시 포트를 입력하세요 (기본값:3333): " proxy_port
-    
     # 마이너 실행
     echo -e "${GREEN}마이너를 실행합니다...${NC}"
     if [ "$gpu_option" == "1" ]; then
-        ./output/quai-gpu-miner-nvidia -U -P stratum://${proxy_ip}:${proxy_port}
+        ./output/quai-gpu-miner-nvidia -U -P stratum://localhost:3333
     else
-        ./output/quai-gpu-miner-amd -G -P stratum://${proxy_ip}:${proxy_port}
+        ./output/quai-gpu-miner-amd -G -P stratum://localhost:3333
     fi
 
 else
     echo "잘못된 선택입니다."
     exit 1
 fi
-
