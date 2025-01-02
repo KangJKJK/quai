@@ -356,6 +356,13 @@ elif [ "$option" == "4" ]; then
     sudo chown -R $(whoami):$(whoami) $HOME/quai-gpu-miner
     sudo chown -R $(whoami):$(whoami) output/
 
+    # 마이너 실행
+    echo -e "${GREEN}마이너를 실행합니다...${NC}"
+    if [ "$gpu_option" == "1" ]; then
+        ./output/quai-gpu-miner-nvidia -U -P stratum://localhost:3333
+    else
+        ./output/quai-gpu-miner-amd -G -P stratum://localhost:3333
+    fi
 else
     echo "잘못된 선택입니다."
     exit 1
