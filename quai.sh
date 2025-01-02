@@ -205,7 +205,7 @@ elif [ "$option" == "2" ]; then
         sudo ufw allow $port/tcp
         sudo ufw allow 22/tcp
         sudo ufw allow 3000/tcp
-        sudo ufw allow 4090/tcp
+        sudo ufw allow 9090/tcp
         sudo ufw allow 3333/tcp
     done
     
