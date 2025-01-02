@@ -72,24 +72,14 @@ if [ "$option" == "1" ]; then
         fi
     done
     
-        # CUDA 툴킷 설치 여부 확인
-        if command -v nvcc &> /dev/null; then
-            echo -e "${GREEN}CUDA 툴킷이 이미 설치되어 있습니다.${NC}"
-            nvcc --version
-            read -p "CUDA 툴킷을 다시 설치하시겠습니까? 최초설치시 업데이트를 위해 다시설치하세요. (y/n): " reinstall_cuda
-            if [ "$reinstall_cuda" == "y" ]; then
-                sudo apt-get -y install cuda-toolkit-12-3
-                echo 'export PATH=/usr/local/cuda-12.3/bin:$PATH' >> ~/.bashrc
-                echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.3/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
-                export PATH=/usr/local/cuda/bin:$PATH
-                export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-                source ~/.bashrc
-                sudo ln -s /usr/local/cuda-12.3 /usr/local/cuda
-            fi
-        else
-            echo -e "${YELLOW}CUDA 툴킷을 설치합니다...${NC}"
-            sudo apt-get install -y nvidia-cuda-toolkit
-        fi
+        #Cuda v12.6 설치
+        sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
+        sudo apt-get autoremove
+        wget https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_535.86.10_linux.run
+        sudo sh cuda_12.6.0_535.86.10_linux.run
+        echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
+        echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+        source ~/.bashrc
 
         export PATH=/usr/local/cuda/bin:$PATH
         export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
