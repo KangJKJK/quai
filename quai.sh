@@ -284,11 +284,6 @@ elif [ "$option" == "3" ]; then
         exit 1
     fi
     
-    # 시스템 및 드라이버 업데이트
-    echo -e "${GREEN}시스템과 드라이버를 업데이트합니다...${NC}"
-    sudo apt update && sudo apt upgrade -y
-    sudo apt install cuda-drivers
-    
     # 마이너 실행
     echo -e "${GREEN}마이너를 실행합니다...${NC}"
     if [ "$gpu_option" == "1" ]; then
