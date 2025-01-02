@@ -46,7 +46,6 @@ if [ "$option" == "1" ]; then
     echo -e "${YELLOW}모니터링 설정이 완료되었습니다.${NC}"
     echo -e "${YELLOW}Grafana 대시보드: http://${VPS_IP}:3000${NC}"
     echo -e "${YELLOW}기본 로그인 정보: admin/admin${NC}"
-    echo -e "${GREEN}노드 실행 시 --metrics.enabled 플래그를 추가하세요.${NC}"
     
     # 포트 허용
     sudo ufw allow 3000/tcp
