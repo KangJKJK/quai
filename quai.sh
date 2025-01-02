@@ -302,14 +302,20 @@ elif [ "$option" == "4" ]; then
     export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
     source ~/.bashrc
 
-    # 스크립트 실행
+    # 스크립트 실행 부분 수정
     echo -e "${YELLOW}마이너를 컴파일하고 빌드합니다. 이 과정은 시간이 오래걸리니 충분히 기다려주세요.${NC}"
-    sudo rm -r quai-gpu-miner
-    sudo ./deploy_miner.sh
+    
+    # 기존 디렉토리 제거 및 새로 클론
+    sudo rm -rf $HOME/quai-gpu-miner
+    git clone https://github.com/dominant-strategies/quai-gpu-miner
+    cd $HOME/quai-gpu-miner
 
-    # 작업공간 이동
-    cd quai-gpu-miner
-    sudo chown -R $(whoami):$(whoami) ~/quai-gpu-miner
+    # 권한 설정 (sudo 유지)
+    sudo chown -R $(whoami):$(whoami) $HOME/quai-gpu-miner
+    
+    # 의존성 패키지 설치
+    sudo apt-get update
+    sudo apt-get install -y build-essential cmake libboost-all-dev
 
     # GPU 종류 선택
     echo -e "${YELLOW}사용하실 GPU 종류를 선택하세요:${NC}"
@@ -317,47 +323,38 @@ elif [ "$option" == "4" ]; then
     echo -e "2: AMD GPU"
     read -p "선택 (1, 2): " gpu_option
 
-    # 현재 디렉토리의 소유권 변경
-    cd ~/quai-gpu-miner
-    sudo chown -R $(whoami):$(whoami) .
-    
-    # build 디렉토리 정리 후 재생성
+    # build 디렉토리 설정
     sudo rm -rf build
-    mkdir build
+    sudo mkdir build
     cd build
-    
-    # cmake 실행 (권한 문제 해결)
-    sudo cmake .. -DETHASHCUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.6
-    
+
+    if [ "$gpu_option" == "1" ]; then
+        # NVIDIA GPU용 빌드
+        sudo cmake .. -DETHASHCUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.6
+    else
+        # AMD GPU용 빌드
+        sudo cmake .. -DETHASHCL=ON
+    fi
+
     # 빌드 실행
     sudo make -j$(nproc)
-    
-    # 상위 디렉토리로 이동 후 output 디렉토리 생성
+
+    # output 디렉토리 설정
     cd ..
     sudo mkdir -p output
-    
-    # 빌드된 파일 복사 및 권한 설정
-    sudo cp build/kawpowminer/kawpowminer output/quai-gpu-miner-nvidia
-    sudo chmod +x output/quai-gpu-miner-nvidia
+
+    # 빌드된 파일 복사
+    if [ "$gpu_option" == "1" ]; then
+        sudo cp build/kawpowminer/kawpowminer output/quai-gpu-miner-nvidia
+        sudo chmod +x output/quai-gpu-miner-nvidia
+    else
+        sudo cp build/kawpowminer/kawpowminer output/quai-gpu-miner-amd
+        sudo chmod +x output/quai-gpu-miner-amd
+    fi
+
+    # 최종 권한 설정
+    sudo chown -R $(whoami):$(whoami) $HOME/quai-gpu-miner
     sudo chown -R $(whoami):$(whoami) output/
-    
-    # GPU 종류에 따른 실행 파일 권한 설정
-    if [ "$gpu_option" == "1" ]; then
-        chmod +x output/quai-gpu-miner-nvidia
-    elif [ "$gpu_option" == "2" ]; then
-        chmod +x output/quai-gpu-miner-amd
-    else
-        echo "잘못된 선택입니다."
-        exit 1
-    fi
-    
-    # 마이너 실행
-    echo -e "${GREEN}마이너를 실행합니다...${NC}"
-    if [ "$gpu_option" == "1" ]; then
-        ./output/quai-gpu-miner-nvidia -U -P stratum://localhost:3333
-    else
-        ./output/quai-gpu-miner-amd -G -P stratum://localhost:3333
-    fi
 
 else
     echo "잘못된 선택입니다."
