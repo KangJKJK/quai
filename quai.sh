@@ -245,6 +245,15 @@ elif [ "$option" == "3" ]; then
     sudo apt-get install -y libboost-system-dev
     sudo apt-get install -y gcc g++
 
+    #Cuda v12.6 설치
+    sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
+    sudo apt-get autoremove
+    wget https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_535.86.10_linux.run
+    sudo sh cuda_12.6.0_535.86.10_linux.run
+    echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
+    echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+    source ~/.bashrc
+
     # CUDA 관련 환경변수 재설정
     export PATH=/usr/local/cuda-12.6/bin${PATH:+:${PATH}}
     export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
