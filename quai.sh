@@ -242,10 +242,16 @@ elif [ "$option" == "3" ]; then
     # 스크립트 실행 권한 부여
     sudo chmod +x deploy_miner.sh
 
-    #필수 패키지 설치
-    sudo apt-get update 
-    sudo apt-get install -y build-essential cmake libboost-all-dev
-    sudo apt-get install -y build-essential libpthread-stubs0-dev
+    #필수 패키지 설치 
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    sudo apt-get install -y build-essential
+    sudo apt-get install -y libboost-all-dev
+    sudo apt-get install -y libpthread-stubs0-dev
+    sudo apt-get install -y cmake
+    sudo apt-get install -y libboost-thread-dev
+    sudo apt-get install -y libboost-system-dev
+    sudo apt-get install -y gcc g++
 
     #Cuda v12.6 설치
     sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
