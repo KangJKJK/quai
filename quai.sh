@@ -287,11 +287,15 @@ elif [ "$option" == "4" ]; then
     sudo apt-get install -y libboost-system-dev
     sudo apt-get install -y gcc g++
 
-    #Cuda v12.6 설치
-    sudo apt-get --purge remove "*cuda*" "*cublas*" "*cufft*" "*cufile*" "*curand*" "*cusolver*" "*cusparse*" "*gds-tools*" "*npp*" "*nvjpeg*" "nsight*" "*nvvm*"
-    sudo apt-get autoremove
-    wget https://developer.download.nvidia.com/compute/cuda/12.6.0/local_installers/cuda_12.6.0_535.86.10_linux.run
-    sudo sh cuda_12.6.0_535.86.10_linux.run
+    # CUDA 12.6 설치
+    if ! apt list --installed 2>/dev/null | grep -q cuda-toolkit-12-6; then
+        echo "CUDA toolkit 12.6 설치를 시작합니다..."
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.1-1_all.deb
+        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+        sudo apt update && sudo apt install -y cuda-toolkit-12-6
+    else
+        echo "CUDA toolkit 12.6가 이미 설치되어 있습니다."
+    fi
     echo 'export PATH=/usr/local/cuda-12.6/bin:$PATH' >> ~/.bashrc
     echo 'export LD_LIBRARY_PATH=/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
     source ~/.bashrc
@@ -306,11 +310,13 @@ elif [ "$option" == "4" ]; then
     
     # 기존 디렉토리 제거 및 새로 클론
     sudo rm -rf $HOME/quai-gpu-miner
+    cd "$HOME"
     git clone https://github.com/dominant-strategies/quai-gpu-miner
     cd $HOME/quai-gpu-miner
 
     # 권한 설정 (sudo 유지)
     sudo chown -R $(whoami):$(whoami) $HOME/quai-gpu-miner
+    git submodule update --init --recursive
     
     # 의존성 패키지 설치
     sudo apt-get update
@@ -327,16 +333,15 @@ elif [ "$option" == "4" ]; then
     sudo mkdir build
     cd build
 
-    if [ "$gpu_option" == "1" ]; then
+ if [ "$gpu_option" == "1" ]; then
         # NVIDIA GPU용 빌드
-        sudo cmake .. -DETHASHCUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-12.6
+        cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF
+        cmake --build .
     else
         # AMD GPU용 빌드
-        sudo cmake .. -DETHASHCL=ON
+        cmake .. -DETHASHCUDA=OFF -DETHASHCL=ON
+        cmake --build .
     fi
-
-    # 빌드 실행
-    sudo make -j$(nproc)
 
     # output 디렉토리 설정
     cd ..
@@ -362,6 +367,7 @@ elif [ "$option" == "4" ]; then
     else
         ./output/quai-gpu-miner-amd -G -P stratum://localhost:3333
     fi
+
 else
     echo "잘못된 선택입니다."
     exit 1
