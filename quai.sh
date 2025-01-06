@@ -242,6 +242,7 @@ elif [ "$option" == "3" ]; then
 
     # TCP 포트 확인 및 허용
     echo -e "${YELLOW}TCP 포트 확인 및 허용 중...${NC}"
+    sudo ufw enable
     sudo ss -tlpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
         echo -e "TCP 포트 ${GREEN}$port${NC} 허용"
         sudo ufw allow $port/tcp
