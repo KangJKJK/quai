@@ -48,8 +48,10 @@ if [ "$option" == "1" ]; then
     echo -e "${YELLOW}기본 로그인 정보: admin/admin${NC}"
     
     # 포트 허용
+    sudo ufw enable
     sudo ufw allow 3000/tcp
     sudo ufw allow 9090/tcp
+    sudo ufw allow 22/tcp
 
 elif [ "$option" == "2" ]; then
     echo "QUAI 노드 새로 설치를 선택했습니다."
