@@ -46,6 +46,7 @@ if [ "$option" == "1" ]; then
     echo -e "${YELLOW}모니터링 설정이 완료되었습니다.${NC}"
     echo -e "${YELLOW}Grafana 대시보드: http://${VPS_IP}:3000${NC}"
     echo -e "${YELLOW}기본 로그인 정보: admin/admin${NC}"
+    read -p "위정보를 입력해두세요.(엔터): "
     
     # 포트 허용
     sudo ufw enable
