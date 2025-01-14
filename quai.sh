@@ -41,6 +41,7 @@ if [ "$option" == "1" ]; then
     # 서비스 시작
     echo -e "${GREEN}모니터링 서비스를 시작합니다...${NC}"
     sudo systemctl start prometheus
+    sudo systemctl enable grafana-server.service
     sudo systemctl start grafana-server.service
 
     # 포트 허용
