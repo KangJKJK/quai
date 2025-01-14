@@ -44,23 +44,29 @@ if [ "$option" == "1" ]; then
     sudo systemctl enable grafana-server.service
     sudo systemctl start grafana-server.service
 
-    # 포트 허용
+    echo -e "${GREEN}QUAI노드 구동을 위해선 다양한 PORT에대해 허용하는 작업이 필요합니다.${NC}"
+    echo -e "${RED}지금부터 모든 방화벽에대해 허용하게 됩니다. VPS가 아니라면 절대 진행하지마세요.${NC}"
+    read -p "진행하시겠습니까? (y/n): " proceed
+    
+    if [ "$proceed" != "y" ]; then
+        echo -e "${RED}스크립트를 종료합니다.${NC}"
+        exit 1
+    fi
+
+    # 모든 포트 허용
     sudo ufw enable
-    sudo ufw allow 3000/tcp
-    sudo ufw allow 9090/tcp
-    sudo ufw allow 4001/tcp
-    sudo ufw allow 22/tcp
+    sudo ufw default allow
 
     # 구글클라우드용 방화벽 규칙 생성
     sudo curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/tags
 
-    # 필요한 포트오픈
-    gcloud compute firewall-rules create allow-quai-all \
+    # 모든 포트 오픈
+    gcloud compute firewall-rules create allow-all-traffic \
     --direction=INGRESS \
     --priority=1000 \
     --network=default \
     --action=ALLOW \
-    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333,tcp:4001,tcp:8545,tcp:8546,tcp:8547,udp:30303 \
+    --rules=all \
     --source-ranges=0.0.0.0/0 \
     --target-tags=http-server
     
