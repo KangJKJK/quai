@@ -48,18 +48,19 @@ if [ "$option" == "1" ]; then
     sudo ufw enable
     sudo ufw allow 3000/tcp
     sudo ufw allow 9090/tcp
+    sudo ufw allow 4001/tcp
     sudo ufw allow 22/tcp
 
     # 구글클라우드용 방화벽 규칙 생성
     sudo curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/tags
 
-    # 9090, 3000, 3333 규칙설정
-    gcloud compute firewall-rules create allow-all-ports \
+    # 필요한 포트오픈
+gcloud compute firewall-rules create allow-quai-p2p \
     --direction=INGRESS \
     --priority=1000 \
     --network=default \
     --action=ALLOW \
-    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333 \
+    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333,tcp:4001 \
     --source-ranges=0.0.0.0/0 \
     --target-tags=http-server
     
