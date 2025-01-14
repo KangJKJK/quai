@@ -49,6 +49,19 @@ if [ "$option" == "1" ]; then
     sudo ufw allow 3000/tcp
     sudo ufw allow 9090/tcp
     sudo ufw allow 22/tcp
+
+    # 구글클라우드용 방화벽 규칙 생성
+    sudo curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/tags
+
+    # 9090, 3000, 3333 규칙설정
+    gcloud compute firewall-rules create allow-all-ports \
+    --direction=INGRESS \
+    --priority=1000 \
+    --network=default \
+    --action=ALLOW \
+    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333 \
+    --source-ranges=0.0.0.0/0 \
+    --target-tags=http-server
     
     echo -e "${YELLOW}모니터링 설정이 완료되었습니다.${NC}"
     echo -e "${YELLOW}Grafana 대시보드: http://${VPS_IP}:3000${NC}"
@@ -243,26 +256,6 @@ elif [ "$option" == "3" ]; then
 
     # 현재 사용 중인 포트 확인 및 허용
     echo -e "${GREEN}현재 사용 중인 포트를 확인합니다...${NC}"
-
-    # TCP 포트 확인 및 허용
-    echo -e "${YELLOW}TCP 포트 확인 및 허용 중...${NC}"
-    sudo ufw enable
-    sudo ss -tlpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
-        echo -e "TCP 포트 ${GREEN}$port${NC} 허용"
-        sudo ufw allow $port/tcp
-        sudo ufw allow 22/tcp
-        sudo ufw allow 3000/tcp
-        sudo ufw allow 9090/tcp
-        sudo ufw allow 3333/tcp
-    done
-    
-    # UDP 포트 확인 및 허용
-    echo -e "${YELLOW}UDP 포트 확인 및 허용 중...${NC}"
-    sudo ss -ulpn | grep LISTEN | awk '{print $4}' | cut -d':' -f2 | while read port; do
-        echo -e "UDP 포트 ${GREEN}$port${NC} 허용"
-        sudo ufw allow $port/udp
-        sudo ufw allow 3333/udp
-    done
 
     #프록시 실행 
     read -p "quai 프록시를 실행합니다.(엔터)"
