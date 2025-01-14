@@ -55,12 +55,12 @@ if [ "$option" == "1" ]; then
     sudo curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/tags
 
     # 필요한 포트오픈
-gcloud compute firewall-rules create allow-quai-p2p \
+    gcloud compute firewall-rules create allow-quai-all \
     --direction=INGRESS \
     --priority=1000 \
     --network=default \
     --action=ALLOW \
-    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333,tcp:4001 \
+    --rules=tcp:3000,tcp:9090,tcp:3333,udp:3333,tcp:4001,tcp:8545,tcp:8546,tcp:8547,udp:30303 \
     --source-ranges=0.0.0.0/0 \
     --target-tags=http-server
     
