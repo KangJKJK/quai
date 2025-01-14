@@ -67,7 +67,24 @@ if [ "$option" == "1" ]; then
     echo -e "${YELLOW}모니터링 설정이 완료되었습니다.${NC}"
     echo -e "${YELLOW}Grafana 대시보드: http://${VPS_IP}:3000${NC}"
     echo -e "${YELLOW}기본 로그인 정보: admin/admin${NC}"
-    read -p "위정보를 입력해두세요.(엔터): "
+    read -p "대시보드에 접속하시고 로그인하신 후 엔터를 눌러주세요: "
+    
+    echo -e "${YELLOW}좌측 메뉴에서 Connection 탭으로 이동하세요.${NC}"
+    echo -e "${YELLOW}Add new connection을 클릭하세요.${NC}"
+    echo -e "${YELLOW}Prometheus를 검색하신 후 클릭하세요.${NC}"
+    echo -e "${YELLOW}우측에 있는 Add new data source를 클릭하세요.${NC}"
+    echo -e "${YELLOW}Data source에서 Prometheus를 선택하세요.${NC}"
+    echo -e "${YELLOW}Connection란에 http://${VPS_IP}:9090 를 입력하세요.${NC}"
+    read -p "모든단계를 완료하신 후 엔터를 눌러주세요: "
+    
+    echo -e "${YELLOW}좌측 메뉴에서 Dashboards 탭으로 이동하세요.${NC}"
+    echo -e "${YELLOW}우측에서 New를 클릭하신 후 Import를 클릭하세요.${NC}"
+    echo -e "${YELLOW}Prometheus를 검색하신 후 클릭하세요.${NC}"
+    echo -e "${YELLOW}우측에 있는 Add new data source를 클릭하세요.${NC}"
+    echo -e "${YELLOW}https://github.com/dominant-strategies/go-quai/blob/main/metrics_config/grafana_metrics.json 로 이동하세요.${NC}"
+    echo -e "${YELLOW}우측에 있는 RAW옆에 복사하기 버튼을 눌러서 코드를 복사해주세요.${NC}"
+    echo -e "${YELLOW}다시 Import dashboard로 돌아와서 해당 코드를 붙여놓고 Load버튼을 클릭하세요.${NC}"
+    read -p "모든단계가 끝났습니다. 엔터를 입력하세요: "
 
 elif [ "$option" == "2" ]; then
     echo "QUAI 노드 새로 설치를 선택했습니다."
