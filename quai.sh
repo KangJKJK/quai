@@ -85,8 +85,6 @@ if [ "$option" == "1" ]; then
     
     echo -e "${YELLOW}좌측 메뉴에서 Dashboards 탭으로 이동하세요.${NC}"
     echo -e "${YELLOW}우측에서 New를 클릭하신 후 Import를 클릭하세요.${NC}"
-    echo -e "${YELLOW}Prometheus를 검색하신 후 클릭하세요.${NC}"
-    echo -e "${YELLOW}우측에 있는 Add new data source를 클릭하세요.${NC}"
     echo -e "${YELLOW}https://github.com/dominant-strategies/go-quai/blob/main/metrics_config/grafana_metrics.json 로 이동하세요.${NC}"
     echo -e "${YELLOW}우측에 있는 RAW옆에 복사하기 버튼을 눌러서 코드를 복사해주세요.${NC}"
     echo -e "${YELLOW}다시 Import dashboard로 돌아와서 해당 코드를 붙여놓고 Load버튼을 클릭하세요.${NC}"
