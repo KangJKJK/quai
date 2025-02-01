@@ -359,15 +359,59 @@ elif [ "$option" == "4" ]; then
 
     if [ "$gpu_option" == "1" ]; then
         # NVIDIA GPU용 빌드
-        export CUDA_HOME=/usr/local/cuda-12.6
-        sudo -E cmake .. -DETHASHCUDA=ON -DETHASHCL=OFF \
-            -DCMAKE_CUDA_ARCHITECTURES="52;60;61;70;75;80;86" \
-            -DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.6/bin/nvcc
-        sudo -E make -j$(nproc)
-        mkdir -p ../output
-        sudo cp kawpowminer/kawpowminer ../output/quai-gpu-miner-nvidia
-        sudo chmod +x ../output/quai-gpu-miner-nvidia
-        sudo chown -R $(whoami):$(whoami) ../output
+        cd $HOME/quai-gpu-miner
+        
+        # 기존 빌드 디렉토리 정리
+        sudo rm -rf build
+        mkdir -p build
+        cd build
+        
+        # CUDA 설치 확인
+        if ! command -v nvcc &> /dev/null; then
+            echo "CUDA가 설치되어 있지 않습니다. CUDA를 먼저 설치해주세요."
+            exit 1
+        fi
+        
+        # GPU 확인
+        if ! command -v nvidia-smi &> /dev/null; then
+            echo "NVIDIA GPU를 감지할 수 없습니다."
+            exit 1
+        fi
+        
+        # CMake 구성
+        cmake .. \
+            -DETHASHCUDA=ON \
+            -DETHASHCL=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CUDA_COMPILER=/usr/local/cuda/bin/nvcc
+        
+        if [ $? -ne 0 ]; then
+            echo "CMake 구성에 실패했습니다."
+            exit 1
+        fi
+        
+        # 빌드 실행
+        make -j$(nproc)
+        
+        if [ $? -ne 0 ]; then
+            echo "빌드에 실패했습니다."
+            exit 1
+        fi
+        
+        # 빌드 결과물 확인 및 복사
+        cd ..
+        if [ -f "build/quai-gpu-miner" ]; then
+            mkdir -p output
+            cp build/quai-gpu-miner output/quai-gpu-miner-nvidia
+            chmod +x output/quai-gpu-miner-nvidia
+            echo "마이너 빌드가 완료되었습니다."
+            
+            # 마이너 실행
+            ./output/quai-gpu-miner-nvidia -U -P stratum://localhost:3333
+        else
+            echo "빌드 파일을 찾을 수 없습니다."
+            exit 1
+        fi
     else
         # AMD GPU용 빌드
         cmake .. -DETHASHCUDA=OFF -DETHASHCL=ON
